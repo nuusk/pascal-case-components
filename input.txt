@@ -1,0 +1,48 @@
+<template>
+  <n9-icon v-ifclass="asd-asd-
+    v-bind:alt="alt"
+    icon="close"
+    class="close-button"
+    :onClick="closePanel"
+    :size="size"
+  ></n9-icon>
+</template>
+
+<script lang="ts">
+import { Component, Prop, Vue } from "vue-property-decorator";
+import N9Icon from "@/components/controls/Icon.vue";
+import { SIDE_PANEL_ACTIONS } from "@/store/side-panel/SidePanel.actions";
+
+@Component({
+  components: { N9Icon },
+})
+export default class CloseButton extends Vue {
+  @Prop({ default: 20 }) size!: number;
+  @Prop() handleClick!: () => null;
+  @Prop() private alt!: string;
+
+  private closePanel(): void {
+    if (this.handleClick) {
+      this.handleClick();
+    } else {
+      this.$store.dispatch(SIDE_PANEL_ACTIONS.CLOSE);
+    }
+  }
+}
+</script>
+
+<style lang="scss" scope>
+.close-button {
+  cursor: pointer;
+  position: relative;
+}
+
+.close-button::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  bottom: -10px;
+  left: -10px;
+  right: -10px;
+}
+</style>
