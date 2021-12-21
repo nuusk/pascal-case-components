@@ -1,5 +1,5 @@
 <template>
-  <n9-icon v-ifclass="asd-asd-
+  <n9-icon-abc-def v-ifclass="asd-asd->
     v-bind:alt="alt"
     icon="close"
     class="close-button"
