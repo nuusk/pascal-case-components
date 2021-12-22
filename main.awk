@@ -1,11 +1,10 @@
 function capitalizeString(strRaw) {
   strFirstLetter = substr(strRaw, 1, 1)
-  strTail = substr( strRaw, 2 )
-  return toupper(strFirstLetter) strTail
+  strTailConverted = substr( strRaw, 2 )
+  return toupper(strFirstLetter) strTailConverted
 }
 
-function convertToPascalCase(strRaw, separatorInRegex, iteration) {
-  iteration++
+function convertToPascalCase(strRaw, separatorInRegex) {
   split(strRaw, strSections, separatorInRegex)
   strBeforeTagOpen = strSections[1]
   strAfterTagOpen = ""
@@ -13,23 +12,21 @@ function convertToPascalCase(strRaw, separatorInRegex, iteration) {
     if (i == 1) {
       continue;
     } if (i == 2) {
-      strAfterTagOpen = strAfterTagOpen  strSections[i]
+      strAfterTagOpen = strAfterTagOpen strSections[i]
     } else {
       strAfterTagOpen = strAfterTagOpen separatorInRegex strSections[i]
     }
 
   }
 
-  # print "string after: " strAfterTagOpen
-
   split(strAfterTagOpen, strAfterTagOpenSections, " ")
   strKebabCase = strAfterTagOpenSections[1]
-  strSufix = ""
+  strTail = ""
   for (i in strAfterTagOpenSections) {
     if (i == 1) {
       continue;
     }
-    strSufix = strSufix " " strAfterTagOpenSections[i]
+    strTail = strTail " " strAfterTagOpenSections[i]
   }
 
   split(strKebabCase, kebabCaseSections, "-")
@@ -38,40 +35,25 @@ function convertToPascalCase(strRaw, separatorInRegex, iteration) {
     strPascalCase = strPascalCase capitalizeString(kebabCaseSections[j])
   }
 
-  print "head: " strBeforeTagOpen separatorInRegex strPascalCase
-  print "tail: " strSufix
-  strSufixDoubleChecked = ""
-   if (strSufix ~ /.*<[a-zA-Z0-9]+([-]+[a-zA-Z0-9]+)+.*/) {
-    strSufixDoubleChecked = convertToPascalCase(strSufix, "<", iteration)
-  } else if (strSufix ~ /.*<\/[a-zA-Z0-9]+([-]+[a-zA-Z0-9]+)+.*/) {
-    strSufixDoubleChecked = convertToPascalCase(strSufix, "</", iteration)
+  strHead = strBeforeTagOpen separatorInRegex strPascalCase
+  strHeadTail = ""
+   if (strTail ~ /.*<[a-zA-Z0-9]+([-]+[a-zA-Z0-9]+)+.*/) {
+    strHeadTail = strHead convertToPascalCase(strTail, "<")
+  } else if (strTail ~ /.*<\/[a-zA-Z0-9]+([-]+[a-zA-Z0-9]+)+.*/) {
+    strHeadTail = strHead convertToPascalCase(strTail, "</")
   } else {
-    strSufixDoubleChecked = strSufix
+    strHeadTail = strHead strTail
   }
 
-  if (iteration == 1) {
-    strPascalCaseWithPrefix = strBeforeTagOpen separatorInRegex strPascalCase strSufixDoubleChecked
-  } else {
-    strPascalCaseWithPrefix = strBeforeTagOpen separatorInRegex strPascalCase strSufixDoubleChecked
-  }
-
-
-  # print "strBeforeTagOpen: " strBeforeTagOpen
-  # print "double checked: ", strSufixDoubleChecked
-  # print "strPascalCaseWithPrefix: " strPascalCaseWithPrefix
-
-  print "strPascalCaseWithPrefix: " strPascalCaseWithPrefix
-
-
-  return strPascalCaseWithPrefix
+  return strHeadTail
 }
 
 {
   if ($0 ~ /.*<[a-zA-Z0-9]+([-]+[a-zA-Z0-9]+)+.*/) {
-    strPascalCase = convertToPascalCase($0, "<", 0)
+    strPascalCase = convertToPascalCase($0, "<")
     print strPascalCase
   } else if ($0 ~ /.*<\/[a-zA-Z0-9]+([-]+[a-zA-Z0-9]+)+.*/) {
-    strPascalCase = convertToPascalCase($0, "</", 0)
+    strPascalCase = convertToPascalCase($0, "</")
     print strPascalCase
   } else {
     print $0
